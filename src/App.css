@@ -58,6 +58,7 @@
 .btn-secondary {
   background-color: #6c757d;
   color: white;
+  padding: 10px 20px;
 }
 
 .btn-secondary:hover {
@@ -89,4 +90,22 @@
 
 p {
   color: #666;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 12px;
+  font-size: 1rem;
+}
+
+.btn-danger {
+  background-color: #dc3545;
+  color: white;
+}
+
+.btn-danger:hover {
+  background-color: #c82333;
 }

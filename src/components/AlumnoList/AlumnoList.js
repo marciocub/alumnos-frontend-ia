@@ -13,6 +13,7 @@ const AlumnoList = ({ alumnos, onEdit, onDelete }) => {
           <tr>
             <th>ID</th>
             <th>Nombre</th>
+            <th>Apellido</th>
             <th>Email</th>
             <th>Teléfono</th>
             <th>Fecha Inscripción</th>
@@ -25,6 +26,7 @@ const AlumnoList = ({ alumnos, onEdit, onDelete }) => {
             <tr key={alumno.id}>
               <td>{alumno.id}</td>
               <td>{alumno.nombre}</td>
+              <td>{alumno.apellido}</td>
               <td>{alumno.email}</td>
               <td>{alumno.telefono || '-'}</td>
               <td>{new Date(alumno.fechaInscripcion).toLocaleDateString()}</td>

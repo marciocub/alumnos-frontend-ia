@@ -5,6 +5,7 @@ const AlumnoForm = ({ onSubmit, initialData, onCancel }) => {
   const [formData, setFormData] = useState(
     initialData || {
       nombre: '',
+      apellido: '',
       email: '',
       telefono: '',
       estado: 'activo'
@@ -35,6 +36,18 @@ const AlumnoForm = ({ onSubmit, initialData, onCancel }) => {
           id="nombre"
           name="nombre"
           value={formData.nombre}
+          onChange={handleChange}
+          required
+        />
+      </div>
+
+      <div className="form-group">
+        <label htmlFor="apellido">Apellido:</label>
+        <input
+          type="text"
+          id="apellido"
+          name="apellido"
+          value={formData.apellido}
           onChange={handleChange}
           required
         />

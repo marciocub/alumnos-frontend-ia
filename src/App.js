@@ -1,20 +1,27 @@
 import React, { useState, useEffect } from 'react';
+import Login from './components/Login/Login';
 import AlumnoForm from './components/AlumnoForm/AlumnoForm';
 import AlumnoList from './components/AlumnoList/AlumnoList';
 import AlumnoService from './services/AlumnoService';
+import AuthService from './services/AuthService';
 import './App.css';
 
 function App() {
+  const [loggedIn, setLoggedIn] = useState(AuthService.isAuthenticated());
+  const [user, setUser] = useState(null);
   const [alumnos, setAlumnos] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [editingAlumno, setEditingAlumno] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Cargar alumnos al montar el componente
+  // Cargar alumnos al montar el componente (solo si hay sesión)
   useEffect(() => {
-    loadAlumnos();
-  }, []);
+    if (loggedIn) {
+      loadAlumnos();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loggedIn]);
 
   const loadAlumnos = async () => {
     setLoading(true);
@@ -23,11 +30,30 @@ function App() {
       setAlumnos(response.data);
       setError(null);
     } catch (err) {
-      setError('Error al cargar los alumnos. Verifica que el servidor está activo.');
+      if (err.response?.status === 401) {
+        handleLogout('La sesión expiró. Vuelve a iniciar sesión.');
+      } else {
+        setError('Error al cargar los alumnos. Verifica que el servidor está activo.');
+      }
       console.error(err);
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleLogin = (data) => {
+    setUser({ email: data.email, nombre: data.nombre });
+    setLoggedIn(true);
+  };
+
+  const handleLogout = (message) => {
+    AuthService.logout();
+    setLoggedIn(false);
+    setUser(null);
+    setAlumnos([]);
+    setShowForm(false);
+    setEditingAlumno(null);
+    if (message) alert(message);
   };
 
   const handleCreateOrUpdate = async (formData) => {
@@ -69,10 +95,19 @@ function App() {
     setEditingAlumno(null);
   };
 
+  // Sin sesión activa → pantalla de login
+  if (!loggedIn) {
+    return <Login onLogin={handleLogin} />;
+  }
+
   return (
     <div className="App">
       <header className="App-header">
         <h1>Gestión de Alumnos</h1>
+        <div className="user-info">
+          <span>{user?.nombre ? user.nombre : user?.email}</span>
+          <button className="btn btn-danger" onClick={() => handleLogout()}>Salir</button>
+        </div>
       </header>
 
       <main className="App-main">
@@ -81,7 +116,7 @@ function App() {
         {loading && <p>Cargando...</p>}
 
         {!showForm && !loading && (
-          <button 
+          <button
             className="btn btn-primary"
             onClick={() => setShowForm(true)}
           >
